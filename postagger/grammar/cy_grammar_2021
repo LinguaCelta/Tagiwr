@@ -1,0 +1,1122 @@
+DELIMITERS = (Atd);
+SOFT-DELIMITERS = ("<,>" "<;>" "<:>" '<">' "<)>");
+
+SET stop_here = ("<.>") | ("<!>") | ("<?>") | ("<:>") | ("<;>") | ('<">') | (Gw sym);
+
+## Surface-form-related
+LIST initSV = ("<a.*>"ri) ("<e.*>"ri) ("<i.*>"ri) ("<o.*>"ri) ("<u.*>"ri) ("<w.*>"ri) ("<ŵ.*>"ri) ("<y.*>"ri) ("<ŷ.*>"ri);  ## surface form begins with a vowel
+
+## Mutation-related
+LIST mutS = (sm);
+LIST mutN = (nm);
+LIST mutA = (am);
+LIST initsm = ("b.*"ri) ("c.*"ri) ("d.*"ri) ("g.*"ri) ("ll.*"ri) ("m.*"ri) ("p.*"ri) ("rh.*"ri) ("t.*"ri);  ## initial consonants that are soft mutateable
+LIST smtrigger = ("am" Ar) ("ar" Ar) ("at" Ar) ("dacw" Adf) ("dau" Rhi) ("dwy" Rhi fol) ("dy" Rha dib) ("dyma" Adv) ("dyna" Adv) ("ei" Rha dib g) ("fe" U cad) ("gan" Ar) ("go" Adf) ("heb" Ar) ("hyd" Ar) ("i" Ar) ("mi" U cad) ("neu" Cys) ("o" Ar) ("pa" Adf) ("pan" Cys) ("pur" Adf) ("rhy" Adf) ("rhyw" preq) ("tan" Ar) ("tros" Ar) ("trwy" Ar) ("wrth" Ar) ("ei" Ban medd);
+LIST amtrigger = ("a" Cys) ("â" Ar) ("ei" Rha dib b) ("gyda" Ar) ("tua" Ar);
+LIST nmtrigger = ("fy" Rha dib) ("yn" Ar);
+
+## POS-related
+LIST noun = E;
+SET noun = (E);
+SET nounlike = (noun) | (B e) | (Rha) | (Rhi);
+SET numerical = (Gw dig) | (Rhi fol);
+SET np_starter = (nounlike) | (Ban) | (YFB);
+LIST verb = B;
+LIST infinitive = (B e);
+SET inflected = (B) - (e);  ## ie the set of all verbs, minus the set of all infinitives; note that you cannot use LIST here
+LIST preposition = Ar;
+LIST determiner = Ban;
+LIST pronoun = Rha;
+LIST adjective = Ans;
+LIST adverb = Adf;
+LIST conjunction = Cys;
+LIST amvinf = (B e am);
+LIST smvinf = (B e sm);
+LIST amverb = (B am);
+LIST nmverb = (B nm);
+LIST smverb = (B sm);
+LIST amnoun = (E am);
+LIST nmnoun = (E nm);
+LIST smnoun = (E sm);
+LIST possessive = ("ei" :her:) ("ei" :his:);
+
+# Language-related
+SET notcy = ([en]) | ([neutral]) | (<<<) | (>>>);
+SET noten = ([cy]) | ([neutral]) | (<<<) | (>>>);
+
+# Semantic
+SET timenoun = ("eiliad") | ("munud") | ("awr") | ("dwyawr") | ("dydd") | ("penwythnos") | ("wythnos") | ("pythefnos") | ("mis") | ("blwyddyn") | ("degawd") | ("canrif");
+
+
+######## SINGLE-RUN INITIAL SECTIONS START HERE ########
+
+
+BEFORE-SECTIONS
+# 1: Impossible and unlikely forms
+
+### Lexical
+REMOVE ("<allan>"i "gallu") (not 1 ("nhw"));
+REMOVE ("<lan>"i "glân") (not -1* (E b u) BARRIER (B));
+REMOVE ("<gwyn>"i "cwyn") (not -1 ("ei"));
+REMOVE ("<o>"i "go") (not -1 ("<yn>"i)) (not (1 (Ans)));
+REMOVE ("<so>"i Gw acr);
+REMOVE ("<TAG>" [cy]);
+REMOVE ("<D[Ee][Ww][Ii]>"r "tewi");
+REMOVE ("<tawe>" "tewi");
+REMOVE ("of" E p);
+REMOVE ("is" E p);
+REMOVE ("bach" [en]);
+REMOVE ("<bach>" E p);
+REMOVE ("mwydo" B);
+REMOVE ("<gen>"i "gên");
+REMOVE ("<bysa>"i :finger:);
+REMOVE ("<dda>"i "bod");
+REMOVE ("<ail>"i [en]);
+REMOVE ("<byse>" :finger:);
+REMOVE ("<asia>"i "asio");
+REMOVE ("mod" :place:);
+REMOVE ("so" :soh:);
+REMOVE ("can" Egu);
+REMOVE ("gwadu" :deny:);
+REMOVE ("modd" :mode:);
+REMOVE ("agos" Ans eith) (not 1 ("at"));
+REMOVE ("mesur" Ar);
+REMOVE ("dirprwy" :proxy:);
+REMOVE ("hogi" :whet:);
+REMOVE ("siwd" :pseud:);
+REMOVE (Gw llyth ll);  ## hi
+REMOVE ("awr" :hour: ll);  ## awyr<awr
+REMOVE ("nag" E [cy]);
+REMOVE ("gâl" E g ll);
+REMOVE ("<dyna>"i B);
+REMOVE ("<rhy>"i "rhoi");
+### Mutations
+REMOVE ("<thad>"i E p);
+REMOVE ("<rydd>"i "rhoi");
+REMOVE ("meddai" +sm) (0 ("meddu"));
+REMOVE ("yn" +hm);
+REMOVE ("<yr>"i "gyrru") (not 1 (Rha));
+REMOVE ("gau" +0m) (not (-1 (YFB)));
+REMOVE ("gêr" +sm);
+REMOVE ("gau" +sm);
+REMOVE ("<the>"i +am) (not -1 ("ei"));
+REMOVE ("yny" +hm);
+REMOVE ("geto" +sm);
+REMOVE ("cennu" +sm);
+REMOVE ("glais" +sm);
+REMOVE ("h.+"r Ar +hm);
+REMOVE ("bodd" +nm) (not -1 ("wrth"));
+REMOVE ("<fel>"i "mêl");
+REMOVE ("<Wyn>" "oen");
+REMOVE ("traw" +sm);
+REMOVE ("gyr" +sm);
+REMOVE ("<flaen>"i "ymlaen");
+REMOVE ("<fe>"i "peth");
+REMOVE ("gan" Ar +sm);  ## yn<gyn
+REMOVE ("<yna>"i "gan");  ## yn<gyn
+REMOVE ("<n.*>"ri "dod");
+REMOVE ("gan" preppron +sm);  ## sm forms are already listed separately; we need canddo for formal Welsh "a chanddo", though, so retain it in the dictionary
+REMOVE ("da" Ans +nm);  ## na<da
+REMOVE ("pe" Cys +sm);  ## be<pe
+REMOVE ("mo" Adv :not: +sm);  ## fo<mo
+REMOVE ("wedi" +nm);  ## ni<di
+REMOVE ("fi" U +sm);
+REMOVE (+sm) (-1 (YFB)) (0 (E g));
+REMOVE (+am) ( (not -1 ("â")) or (not -1 ("gyda")) or (not -1 ("ni")) );
+REMOVE (+nm) (0 (B));
+REMOVE (+nm) (not -1 nmtrigger);
+REMOVE (+hm) ((not -1 ("ei" :her:)) or (not -1 ("ein" :our:)));
+SELECT (sm) (-1 smtrigger);
+REMOVE ("<dim>" "tîm");
+
+BEFORE-SECTIONS
+# 1: Copy the matched unknown readings, because we want to offer two guesses for their pos tag, based on morphology. 
+COPY (¤copy) TARGET ("[a-z]...*(ydd|ion|iaf|est|ies|on|af|es|ia|ie)"r unk);
+
+BEFORE-SECTIONS
+# 2: Replace tags on unknown words with pos guessed from word morphology
+## 8-letter suffixes
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*yddiaeth>"r unk);
+## 7-letter suffixes
+SUBSTITUTE ([neutral] unk) ([cy] E b ll) TARGET ("<[a-z]...*wragedd>"r unk);
+## 6-letter suffixes
+### NOUNS
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*yddion>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E b u) TARGET ("<[a-z]...*adures>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*garwch>"r unk);
+### VERBS
+SUBSTITUTE ([neutral] unk) ([cy] B e) TARGET ("<[a-z]...*eiddio>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 3 ll) TARGET ("<[a-z]...*iasant>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 2 ll) TARGET ("<[a-z]...*iasech>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 3 ll) TARGET ("<[a-z]...*iasent>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 ll) TARGET ("<[a-z]...*iasoch>"r unk);
+## 5-letter suffixes
+### NOUNS
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*egwyr>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*egydd>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E b u) TARGET ("<[a-z]...*wraig>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E g u) TARGET ("<[a-z]...*awdwr>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*edydd>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*rwydd>"r unk);
+### ADJECTIVES
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*yddol>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+### VERBS
+SUBSTITUTE ([neutral] unk) ([cy] B e) TARGET ("<[a-z]...*eiddo>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 3 ll) TARGET ("<[a-z]...*asant>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 2 ll) TARGET ("<[a-z]...*asech>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 3 ll) TARGET ("<[a-z]...*asent>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 ll) TARGET ("<[a-z]...*asoch>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 u) TARGET ("<[a-z]...*iaist>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 3 u) TARGET ("<[a-z]...*iasai>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 1 ll) TARGET ("<[a-z]...*iasem>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 3 ll) TARGET ("<[a-z]...*iasen>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb amhers) TARGET ("<[a-z]...*iasid>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 2 u) TARGET ("<[a-z]...*iasit>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 ll) TARGET ("<[a-z]...*iasom>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 1 u) TARGET ("<[a-z]...*iaswn>"r unk);
+## 4-letter suffixes
+### NOUNS
+SUBSTITUTE ([neutral] unk) ([cy] E g u) TARGET ("<[a-z]...*oleg>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E g u) TARGET ("<[a-z]...*olig>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*ineb>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*inab>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E g u) TARGET ("<[a-z]...*awdr>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E g u) TARGET ("<[a-z]...*aeth>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*adur>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*oedd>"r unk);
+### ADJECTIVES
+SUBSTITUTE ([neutral] unk) ([en] Ans eith) TARGET ("<[a-z]...*iest>"r unk ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*aidd>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*lawn>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*edig>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*adwy>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+### VERBS
+SUBSTITUTE ([neutral] unk) ([cy] B e) TARGET ("<[a-z]...*ychu>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B e) TARGET ("<[a-z]...*ydda>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B e) TARGET ("<[a-z]...*yddu>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 u) TARGET ("<[a-z]...*aist>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 3 u) TARGET ("<[a-z]...*asai>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 1 ll) TARGET ("<[a-z]...*asem>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 3 ll) TARGET ("<[a-z]...*asen>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb amhers) TARGET ("<[a-z]...*asid>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 2 u) TARGET ("<[a-z]...*asit>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 ll) TARGET ("<[a-z]...*asom>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorb 1 u) TARGET ("<[a-z]...*aswn>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 u) TARGET ("<[a-z]...*iais>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 3 ll) TARGET ("<[a-z]...*iant>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 2 ll) TARGET ("<[a-z]...*iech>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 3 ll) TARGET ("<[a-z]...*ient>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 u) TARGET ("<[a-z]...*iest>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 ll) TARGET ("<[a-z]...*ioch>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 3 u) TARGET ("<[a-z]...*iodd>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dibdyf 3 ll) TARGET ("<[a-z]...*iont>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 ll) TARGET ("<[a-z]...*soch>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 2 ll) TARGET ("<[a-z]...*iwch>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff amhers) TARGET ("<[a-z]...*iwyd>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dibdyf 1 u) TARGET ("<[a-z]...*iwyf>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dibdyf 2 u) TARGET ("<[a-z]...*iych>"r unk);
+## 3-letter suffixes
+### NOUNS
+SUBSTITUTE ([neutral] unk) ([en] E ll) TARGET ("<[a-z]...*ies>"r unk ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] E g u) TARGET ("<[a-z]...*cyn>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*ydd>"r ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*ydd>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*had>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*red>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*iad>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B e) TARGET ("<[a-z]...*hau>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E b u) TARGET ("<[a-z]...*cen>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E b u) TARGET ("<[a-z]...*ell>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*deb>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*der>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*dra>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*did>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("<[a-z]...*dod>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E g ll) TARGET ("...*wyr"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("...*aid"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*iau>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*ion>"r unk ¤copy);
+### NUMERALS
+SUBSTITUTE ([neutral] unk) ([cy] Rhi tref) TARGET ("<[a-z]...*fed>"r unk);
+### ADJECTIVES
+SUBSTITUTE ([neutral] unk) ([en] Ans eith) TARGET ("<[a-z]...*est>"r unk ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] Ans eith) TARGET ("<[a-z]...*iaf>"r unk ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] Ans cym) TARGET ("<[a-z]...*ach>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad) TARGET ("<[a-z]...*iol>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad) TARGET ("<[a-z]...*gar>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad) TARGET ("<[a-z]...*lon>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad) TARGET ("<[a-z]...*lyd>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+### VERBS
+SUBSTITUTE ([neutral] unk) ([en] B ing) TARGET ("<[a-z]...*ing>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 ll) TARGET ("<[a-z]...*ion>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff amhers) TARGET ("<[a-z]...*wyd>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dibdyf 1 u) TARGET ("<[a-z]...*wyf>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 1 ll) TARGET ("<[a-z]...*iwn>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 ll) TARGET ("<[a-z]...*som>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 3 ll) TARGET ("<[a-z]...*son>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 2 ll) TARGET ("<[a-z]...*wch>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 u) TARGET ("<[a-z]...*ais>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 3 ll) TARGET ("<[a-z]...*ant>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 1 u) TARGET ("<[a-z]...*iaf>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 3 u) TARGET ("<[a-z]...*iai>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 3 ll) TARGET ("<[a-z]...*ian>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 2 ll) TARGET ("<[a-z]...*ech>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 3 ll) TARGET ("<[a-z]...*ent>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 u) TARGET ("<[a-z]...*est>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorch 3 u) TARGET ("<[a-z]...*ied>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 1 ll) TARGET ("<[a-z]...*iem>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorch 3 ll) TARGET ("<[a-z]...*ien>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 u) TARGET ("<[a-z]...*ies>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 2 u) TARGET ("<[a-z]...*iet>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dyf 3 u) TARGET ("<[a-z]...*iff>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dyf 3 u) TARGET ("<[a-z]...*ith>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 2 ll) TARGET ("<[a-z]...*och>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 3 u) TARGET ("<[a-z]...*odd>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dibdyf 3 ll) TARGET ("<[a-z]...*ont>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dibdyf 1 ll) TARGET ("<[a-z]...*iom>"r unk);
+## 2-letter suffixes
+### NOUNS
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*i[ea]>"r ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] E g u) TARGET ("...*wr"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb u) TARGET ("...*fa"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E b u) TARGET ("...*eb"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E gb ll) TARGET ("<[a-z]...*au>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E ll) TARGET ("<[a-z]...*on>"r ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] E ll) TARGET ("<[a-z]...*od>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E ll) TARGET ("<[a-z]...*au>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] E u) TARGET ("<[a-z]...*yn>"r unk);
+### ADJECTIVES
+SUBSTITUTE ([neutral] unk) ([cy] Ans eith) TARGET ("<[a-z]...*af>"r unk ¤copy);
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*og>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*ol>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+SUBSTITUTE ([neutral] unk) ([cy] Ans cad u) TARGET ("<[a-z]...*us>"r unk) (-1 ([cy] E) OR ([cy] "yn") OR ([cy] Ban));
+### VERBS
+SUBSTITUTE ([neutral] unk) ([cy] B pres 1 u) TARGET ("<[a-z]...*af>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 ll) TARGET ("<[a-z]...*on>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorch 2 u) TARGET ("<[a-z]...*ia>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorch 3 u) TARGET ("<[a-z]...*ed>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 1 ll) TARGET ("<[a-z]...*em>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorch 3 ll) TARGET ("<[a-z]...*en>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorff 1 u) TARGET ("<[a-z]...*es>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 2 u) TARGET ("<[a-z]...*et>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 3 u) TARGET ("<[a-z]...*ie>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B gorch 2 u) TARGET ("<[a-z]...*ia>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff amhers) TARGET ("<[a-z]...*id>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B e) TARGET ("<[a-z]...*io>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres amhers) TARGET ("<[a-z]...*ir>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 2 u) TARGET ("<[a-z]...*it>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B dibdyf 1 ll) TARGET ("<[a-z]...*om>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B amherff 3 u) TARGET ("<[a-z]...*ai>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 3 ll) TARGET ("<[a-z]...*an>"r unk);
+SUBSTITUTE ([neutral] unk) ([cy] B pres 1 ll) TARGET ("<[a-z]...*wn>"r unk);
+
+BEFORE-SECTIONS
+# 3: Mark cohorts whose context suggests they should be read as MWUs or as compounds of some sort
+ADD (¤merge) TARGET ("<[Yy][Nn]>"r) (1 ("<[lL][lL][eE]>"r)) (NOT 2 (Ans) OR (Ar));
+ADD (¤merge) TARGET ("<[Yy][Rr]>"r) (1 ("<[Uu][Nn]>"r)) (NOT 2 (E));
+ADD (¤mergeOCHI) TARGET ("<o>"i) (1 ("<'ch>"i)) (2 ("chi"));
+ADD (¤mergeONNI) TARGET ("<o>"i) (1 ("<'n>"i)) (2 ("ni"));
+ADD (¤mergeOTTI) TARGET ("<o>"i) (1 ("<'t>"i)) (2 ("ti"));
+ADD (¤mergeONI) TARGET ("<o>"i) (1 ("<'n>"i)) (2 ("i"));
+ADD (¤mergeONNHW) TARGET ("<o>"i) (1 ("<'n>"i)) (2 ("nhw"));
+ADD (¤mergeODD) TARGET ("<o>"i) (1 ("<'dd>"i)) (2 ("e"));
+ADD (¤mergeODD) TARGET ("<o>"i) (1 ("<'dd>"i)) (2 ("hi"));
+ADD (¤mergeMI) TARGET ("<do>"ri) IF (1 ("<'n>"ri) LINK 1 ("mi" Rha));
+ADD (¤mergeNHW) TARGET ("<do>"ri) IF (1 ("<'n>"ri) LINK 1 ("nhw"));
+ADD (¤mergeNI) TARGET ("<do>"ri) IF (1 ("<'n>"ri) LINK 1 ("ni"));
+ADD (¤mergeTREFCY) TARGET (Gw dig) IF (1 ("<ed>"i) or ("<eg>"i) or ("<ydd>"i) or ("<af>"i) or ("<il>"i) or ("<ail>"i) or ("<ain>"i) or ("<fed>"i) or ("<edd>"));
+ADD (¤mergeTREFEN) TARGET (Gw dig) IF (1 ("<th>"i) or ("<st>"i) or ("<rd>"i));
+ADD (¤mergeORG) TARGET ("<o>"i) (1 ("<'r>"i)) (2 ("<gorau>"i)) (NOT -1 (Gw dig) or (Rhi tref) or (Rha amh));
+ADD (¤mergeFELHYN) TARGET ("<'>") (1 ("<yn>"i)) (-1 ("<fel>"i));
+
+
+BEFORE-SECTIONS
+# 4: Merge cohorts which have been marked for merging
+MERGECOHORTS ("<$1$2>"v "o'r" [cy] Adf ¤mergeORG2) TARGET ("<([oO])>"r ¤mergeORG) WITH (1 ("<('[Rr])>"r));
+MERGECOHORTS ("<$1_$2>"v "yr_un" [cy] Adf :each: +0m) TARGET ("<([Yy][Rr])>"r ¤merge) WITH (1 ("<([Uu][Nn])>"r));
+MERGECOHORTS ("<$1_$2>"v "yn_lle" [cy] Adf :instead: +0m <{0}>) TARGET ("<([Yy][Nn])>"r ¤merge) WITH (1 ("<([lL][lL][eE])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 1 u :be: +0m <{0}>) TARGET ("<([Dd][Oo])>"r ¤mergeMI) WITH (1 ("<('[Nn])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 3 ll :be: +0m <{0}>) TARGET ("<([Dd][Oo])>"r ¤mergeNHW) WITH (1 ("<('[Nn])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 1 ll :be: +0m <{0}>) TARGET ("<([Dd][Oo])>"r ¤mergeNI) WITH (1 ("<('[Nn])>"r));
+MERGECOHORTS ("<$1$2>"v "$1$2"v [cy] Rhi tref :ordinal: +0m <{0}>) TARGET ("<([1234567890,\.]+)>"r ¤mergeTREFCY) WITH (1 ("<(.+)>"r));
+MERGECOHORTS ("<$1$2>"v "$1$2"v [en] Rhi tref :ordinal: +0m <{0}>) TARGET ("<([1234567890,\.]+)>"r ¤mergeTREFEN) WITH (1 ("<(.+)>"r));
+MERGECOHORTS ("<$1$2>"v "$1s"v [en] E ll :decade: +0m <{0}>) TARGET ("<([1234567890][1234567890][1234567890]0)>"r Gw dig) WITH (1 ("<(s)>"ri Gw llyth));
+MERGECOHORTS ("<$1$2>"v "$1au"v [cy] E g b ll :decade: +0m <{0}>) TARGET ("<([1234567890][1234567890][1234567890]0)>"r Gw dig) WITH (1 ("<(au)>"ri));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 2 ll :be: +0m <{0}>) TARGET ("<([Oo])>"r ¤mergeOCHI) WITH (1 ("<('[Cc][Hh])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 1 ll :be: +0m <{0}>) TARGET ("<([Oo])>"r ¤mergeONNI) WITH (1 ("<('[Nn])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 2 u :be: +0m <{0}>) TARGET ("<([Oo])>"r ¤mergeOTTI) WITH (1 ("<('[Tt])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 1 u :be: +0m <{0}>) TARGET ("<([Oo])>"r ¤mergeONI) WITH (1 ("<('[Nn])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 3 ll :be: +0m <{0}>) TARGET ("<([Oo])>"r ¤mergeONNHW) WITH (1 ("<('[Nn])>"r));
+MERGECOHORTS ("<$1$2>"v "bod" [cy] B amherff 3 u :be: +0m <{0}>) TARGET ("<([Oo])>"r ¤mergeODD) WITH (1 ("<('[Dd][Dd])>"r));
+MERGECOHORTS ("<'$1>"v "hwn" [cy] Rha dang d :this: +0m <{0}>) TARGET ("<'>" ¤mergeFELHYN) WITH (1 ("<([Yy][Nn])>"r));
+
+BEFORE-SECTIONS
+SUBSTITUTE (¤copy) (*) TARGET (¤copy);
+MERGECOHORTS ("<$1_$2>"v "o'r_gorau" [cy] Adf :okay: +0m <{0}>) TARGET ("<([oO]'[Rr])>"r ¤mergeORG2) WITH (1 ("<([Gg][Oo][Rr][Aa][Uu])>"r));
+
+######## ITERATIVE SECTIONS START HERE ########
+
+SECTION
+# 1: Specific, fairly solid rules
+SELECT (Ebych) (-1 (Atd) or (>>>)) (1 (Atd) or (<<<));
+SELECT (Adf) (-1 (Atd) or (>>>)) (1 (Atd) or (<<<));
+REMOVE (Gw llyth) (0 ([cy]));
+SELECT (B e) (-1 ("yn")) (1 np_starter);
+SELECT (B e) (-1 ("yn")) (-1 ("bod" gorff));
+REMOVE (E p) (-1 ("yn")) (0 (Ans [cy]));
+REMOVE (E p) (-1 ("be")) (0 (Ans [en]));
+
+SECTION
+# 2: Code-switching rules
+REMOVE ([en]) (0 ([cy])) (-1 ([cy])) (1 ([cy]));
+REMOVE ([cy]) (0 ([en])) (-1 notcy) (1 notcy) (-2 notcy) (2 notcy); #Remove Welsh reading if there is a valid English reading, and the words 1 place either side are English or neutral, and the words 2 places away are also English or neutral.
+REMOVE ([en] +sm) (0 ([cy] +sm)); # code-switches and loanwords are statistically less likely to mutate, so if there's the option of a mutated cy form, remove any mutated en forms.
+REMOVE ([en] +am) (0 ([cy] +am));
+REMOVE ([en] +nm) (0 ([cy] +nm));
+REMOVE ([en] +hm) (0 ([cy] +hm));
+SELECT ("<I>" [en]) (1 ("be" [en]));
+SELECT ("be" [en]) (-1 ("<I>")) (1 ([en]));
+SELECT ("<was>"i [en]) (-1 ([en]));
+SELECT ("<was>"i [en]) (1 ([en]));
+SELECT ("<to>"i [en]) (-1 ([en]));
+SELECT ("<to>"i [en]) (1 ([en]));
+SELECT ("<do>"i [en]) (-1 ([en]));
+SELECT ("<do>"i [en]) (1 ([en]));
+SELECT ("<all>"i [en]) (-1 ([en]));
+SELECT ("<all>"i [en]) (1 ([en]));
+
+SECTION
+# 3: Various rules
+## MUTATION
+SELECT (+sm) (-1 smtrigger);
+## LEXICAl (move below?)
+SELECT ("<[MF][oô]n>"r E p);
+SELECT ("Môn" E p) (-1 ("ynys") or ("sir") or ("halen"));
+SELECT ("fôn" E p) (-1 ("Bryn"));
+REMOVE ("beiddio") (0 ("meiddio"));
+REMOVE ("<chi>"i "ci") (not -1 ("ei" Rha pers 3 b u));
+REMOVE ("<hwyr>" :grandson:) (not -1 ("ei"));
+SELECT ("min" :edge:) (-1 ("ar" Ar));  ## ar /fin/
+SELECT ("pryd" :time:) (-1 ("pa" :which:));  ## pa /bryd/
+SELECT ("lled" :breadth:) (-2 ("hyd" :length:));  ## hyd a /lled/
+SELECT ("de" :south:) (1 (E p));  ## /de/ Cymru
+SELECT ("de" :south:) (-1 (YFB)) (-2 ("yn" Ar));  ## yn y /de/
+SELECT ("de" :right:) (-1 ("ochr"));  ## yr ochr /dde/
+SELECT ("gwledig" :lord:) (-1 ("Macsen") or ("Cunedda") or ("Ceredig") or ("Pendefig"));  ## Macsen /Wledig/
+REMOVE ("<dy>" :house:) (not -1 (Rha medd));
+REMOVE ("<fel>"i :honey:) (not -1 (Rha medd) or ("<o>"));
+REMOVE ("<pam>" E) (1 (B));
+SELECT ("bod" E g u) (1 ("dynol"));
+REMOVE ("bod" E g u);
+
+SECTION
+# 4: Disambiguating homophones
+SELECT ("hwn" Rha) (-1* (E) BARRIER (Ban));
+SELECT ("hwnnw" Rha) (-1 ("bod"));
+SELECT ("hwn" Ban) (-1 ("un" "peth"));
+SELECT ("hwnnw" Ban) (-1 ("un" "peth"));
+SELECT ("hon" Ban) (-1 ("un" "peth"));
+SELECT ("honno" Ban) (-1 ("un" "peth"));
+SELECT ("hyn" Ban) (-1 ("rhai" "pethau"));
+SELECT ("hynny" Ban) (-1 ("rhai" "pethau"));
+SELECT (Rha dang) (0 (Ban dang)) (not -1 nounlike);
+
+## A
+SELECT ("a" U gof) (1 (B amod));
+SELECT ("a" U gof) (-1 (>>>)) (*1 ("?") BARRIER (stop_here));
+SELECT ("a" U gof) (-1 ("gofyn"));
+SELECT ("a" U gof) (1 ("<oes>"i) or ("<oedd>"i));
+REMOVE (! "a" U gof) (-1 (>>>)) (1 ("<oes>"i) or ("<fydd>"i)) (*1 ("?") BARRIER (stop_here));
+SELECT ("a" U gof) (1 ("medru") or ("gallu"));
+SELECT ("a" Cys) (1 inflected + mutA);
+SELECT ("a" Cys) (1 ("<'r>" YFB));  ## adolygiadau /a'r/ adroddiadau
+SELECT ("a" Cys) (1 (am));  ## /a/ pha bryd
+SELECT ("a" Cys) (-1 (E)) (1 (E));  ## ysgolion /a/ sgiliau
+SELECT ("a" Cys) (-1 (E p)) (1 (E p));  ## Conwy /a/ Gwynedd
+SELECT ("â" Ar) (-1* ("mynd") or ("dod") BARRIER (B));
+SELECT ("<a>"i "mynd") (1 ("<i>")) (2 (Ar));
+## ACHOS
+SELECT ("achos" E) (1 ("llys") or ("troseddol") or ("cyfreithiol") or ("cyntaf") or ("brys") or ("bydol") or ("cnawdol") or ("da" :good:) or ("disgyblu") or ("dybryd") or ("effeithiol") or ("naturiol") or ("traddodi"));
+SELECT ("achos" E) (1 ("a" :and:));
+SELECT ("achos" E) (-1 ("yr"));
+SELECT ("achos" Ar) (1 np_starter);
+SELECT ("achos" Cys) (1 ("bod") or ("mai") or ("<hyn>"i) or ("<hynny>"i) or ("na") or ("fe" U berf) or ("mi" U berf) or inflected);
+## AI
+SELECT ("<Ai>" U gof);
+SELECT ("ai" Cys) (-1 ("gwybod") OR ("meddwl") OR ("penderfynu") OR ("dewis") OR ("pendroni") OR ("poeni") OR ("petruso"));
+SELECT ("ai" U gof) (1 (Rha));
+SELECT ("ai" U gof) (1 ("dyna"));
+SELECT ("ai" U gof) (1* ("?") BARRIER ("."));
+IFF ("<AI>" [en]);
+## AR_BEN
+SELECT ("ar_ben" Ar) (1 (Rha dang));
+SELECT ("ar_ben" Ar) (1 np_starter);
+SELECT ("ar_ben" Adf) (1 (Atd) OR (<<<));
+
+## AR_ÔL
+SELECT ("ar_ôl" Adf) (1 (Atd));
+SELECT ("ar_ôl" Ar) (1 (Rhi));
+SELECT ("ar_ôl" Ar) (1 np_starter);
+SELECT ("ar_ôl" Adf) (1 (Ar));
+SELECT ("ar_ôl" Adf) (-1 (Ar));
+SELECT ("ar_ôl" Adf) (-1 ("bod"));
+## BLAEN
+SELECT ("<flaen>"i E) (-1 ("ei"));
+SELECT ("<flaen>"i E) (-1 (Ar sym));
+REMOVE ("<flaen>"i E) (-1 (E b));
+## BOD
+SELECT ("bod" Cys is) (-1 (":") or (";") or ("-") or (","));
+SELECT ("bod" B) (-1* ("dylu"));
+REMOVE ("bod" E) (NOT 1 ("<dynol>"i));
+SELECT ("<bod>"i B) (NOT 1 ("<dynol>"i));
+SELECT ("bod" Cys) (-1 ("gwybod") or ("credu") or ("meddwl") or ("gobeithio") or ("gweld") or ("honni"));
+## BUM
+SELECT ("<bum>"i "bod") (-1 (>>>) OR (Atd) OR (Gw sym));
+## BYDD
+SELECT ("<bydd>"i gorch 2) (1 (Ans cad u)) (2 (Atd) or (<<<) or ("neu") or ("a") or ("gyda"));
+## CAN
+SELECT ("<can>"i Rhi) (-1 (Rhi) or ("hanner"));
+SELECT ("<can>"i Rhi) (1 ("blwyddyn") or ("llath") or ("milltir"));
+## DA
+SELECT ("da" Ans) (-1 ("digon") or ("reit") or ("eithaf"));
+SELECT ("da" Ans) (-1 (E));
+SELECT ("da" Ans) (-2 (E)) (-1 (B e));
+SELECT ("<da>"i B) (-1 (B e)) (1 np_starter);
+SELECT ("da" Ans +sm) (-1 ("yn"));
+SELECT ("da" Ans) (-2 ("yn")) (-1 (E) or ("un"));
+SELECT ("da" Ans) (-1 ("o")) (-2 (Ans));
+SELECT ("<da>"i B) (-1 ("bod")) (1 nounlike);
+SELECT ("da" Ans) (-1 (>>>));
+## DAL
+SELECT ("<dal>"i B) (1 ("lan"));
+SELECT ("dal" B) (1 nounlike);
+SELECT ("dal" Adf) (-1* ("bod") BARRIER (inflected));
+SELECT ("dal" Adf) (1 ("<i>"i)) (2 ("<fod>"i));
+## DE
+SELECT ("<dde>"i E b u) (-1 (YFB));
+SELECT ("<de>"i E g u) (-1 (YFB));
+SELECT ("de" Ans) (-1 (E));
+## DEILLION
+SELECT ("<deillion>"i E) (-1 (YFB));
+## DI
+REMOVE ("<di>"i "U berf");
+REMOVE ("<di>"i "U berf") (NOT 1 (B e));
+SELECT ("<di>"i "ti") (NOT 1 (B e));
+SELECT ("<di>"i "ti") (1 ("<'n>"));
+SELECT ("<di>"i "ti") (-2 ("dy"));
+## DIM
+REMOVE ("dim" [en]);
+SELECT ("dim" Adf) (2 ("gwybod"));
+SELECT ("dim" Adf +sm) (1 ("yn")) (2 (B e));
+SELECT ("<dim>" Ban) (1 (E));
+SELECT ("dim"i E) (1 ("ond"));
+SELECT ("dim"i Ban) (1 ("byd"));
+## DYN
+SELECT ("<'?dyn>"ri 1 ll) (1 ("ni"));
+SELECT ("<'?dyn>"ri 3 ll) (1 ("nhw"));
+## EI
+REMOVE ("<ei>"i "mynd") (not 1 ("di"));
+SELECT ("<ei>" b) (-1* (E b) BARRIER (nounlike)) (NOT 1 (sm));
+SELECT ("<ei>" g) (-1* (E g) BARRIER (nounlike)) (NOT 1 (am));
+SELECT ("<ei>" b) (1 (+am));
+SELECT ("<ei>" g) (1 (+gm));
+SELECT ("<ei>" b) (1 (nounlike)) (2 ("hi"));
+SELECT ("<ei>" b) (1 (nounlike)) (2 ("fo"));
+REMOVE ("<ei>" :go:) (1 (nounlike));
+SELECT ("ei" Rha dib 3 b u) (-3 (B)) (-2 (E p b)) (-1 (E));
+SELECT ("ei" Rha dib 3 b u) (-2 (B)) (-1 (E p b));
+SELECT ("ei" Rha dib 3 g u) (-3 (B)) (-2 (E p g)) (-1 (E));
+SELECT ("ei" Rha dib 3 g u) (-2 (B)) (-1 (E p g));
+## FATH
+SELECT ("<fath>"i "math") (-1 ("rhyw"));
+SELECT ("<fath>"i "bath") (-1 ("ei")) (-1 ("yn"));
+SELECT ("<fath>"i Ban) (-1 (YFB)) (1 np_starter);
+## FE
+SELECT ("fe" Rha) (1 (B 2 u));
+SELECT ("fe" Rha) (2 (B 2 u));
+SELECT ("fe" U) (1 (B));
+SELECT ("fe" U) (1 (Atd)) (2 (B));
+## FEL_PETAI
+SELECT ("fel_petai" Adf) (1 (Atd) or (<<<));
+SELECT ("fel_petai" Cys);
+## FENYWOD
+SELECT ("<fenywod>"i "menyw");
+## FFASIWN
+SELECT ("<ffasiwn>"i Ban) (1 ("peth"));
+SELECT ("<ffasiwn>"i Ban) (-1 (YFB)) (1 np_starter);
+## FIL
+SELECT ("<fil>"i "mil");
+## FILIWN
+REMOVE ("biliwn" +sm);
+## GALLU
+SELECT ("gallu" B) (NOT -1 (YFB));
+## GAN
+SELECT ("<gan>"i Ar) (NOT 1 (Ans));
+## GOFYN
+SELECT ("gofyn" E) (-1 ("dim"));
+## GWAITH
+SELECT ("gwaith" g u) (-1 (Ans cym)) (1 ("na"));
+IFF ("gwaith" b u) (-1 (Ban meint) or (Rhi) or (Gw dig));
+## GWYBOD
+SELECT ("gwybod" B) (-1 ("yn"));
+## HWYRACH
+SELECT ("hwyrach" Ans cym) (1 ("na" Ar));
+SELECT ("hwyrach" Adf) (1 ("yn" U tra));
+SELECT ("hwyrach" Adf) (1 ("<[fb]od>"ri));
+## I
+REMOVE ("<i>"i Gw llyth);
+SELECT ("<i>"i Rha) (-1 (B 1 u));
+SELECT ("<i>"i Rha) (-1 (E)) (-2 ("<fy>"));
+SELECT ("<i>"i U) (1 (B e)) (NOT -1 ("gwneud") or ("darfod"));
+SELECT ("<i>"i Ar) (1 (E));
+REMOVE ("<i>"i Rha) (1 (Rha));
+## I_GYD
+IFF ("i_gyd" Ban) (-1 (Rha));
+IFF ("<i_gyd>"i Ban) (-1 (E ll));
+## IAWN
+SELECT ("<Iawn>" Ebych) (1 (Atd));
+SELECT ("iawn" Adf) (-1 (Ans));
+SELECT ("iawn" Ans) (-1 ("yn"));
+SELECT ("iawn" Ans) (-1 ("<'n>"));
+SELECT ("iawn" E) (-1 (YFB));
+## IS
+SELECT ("<is>"r [en]) (-1 ([en])) (1 ([en]));
+SELECT ("<is>"r [cy]) (1 ("na"));
+SELECT ("<is>"r [cy]) (-1 ("yn") or (nounlike));
+SELECT ("<is>"r [en]);
+## LAN
+SELECT ("<lan>"i Adf) (-1 ("nôl") OR ("troi") OR ("pigo") or ("diweddu") OR ("bennu") OR ("dal") OR ("tyfu") OR ("byw") OR ("mynd"));
+SELECT ("<lan>"i Adf) (-2 ("nôl") OR ("troi") OR ("pigo") or ("diweddu") OR ("bennu") OR ("dal") OR ("tyfu") OR ("byw") OR ("mynd")) (-1 (Rha));
+SELECT ("<lan>"i Adf) (1 ("ar") OR ("i") OR ("at"));
+SELECT ("<lan>"i "glan") (-1 ("ar"));
+SELECT ("<lan>"i "glan") (1 ("llyn"));
+SELECT ("<lan>"i "glan") (1 ("YFB")) (2 ("llyn") OR ("môr"));
+## LAWR
+REMOVE ("llawr" +sm) (NOT -1 smtrigger);
+## LLAI
+SELECT ("<l?lai>"ri Ban) (1 (E ll));
+SELECT ("<l?lai>"ri Adf) (1 (Ans));
+SELECT ("<l?lai>"ri Adf) (-1 (B)) (1 (<<<) or (Atd));
+SELECT ("<l?lai>"ri Ans) (-1 nounlike);
+SELECT ("<l?lai>"ri Rha) (1 (Ar));
+SELECT ("<l?lai>"ri Rha) (1 ("a")) (2 ("llai")) (3 ("o"));
+SELECT ("<l?lai>"ri Adf) (1 ("a")) (2 ("llai")) (3 (<<<) or (Atd));
+SELECT ("<l?lai>"ri Rha) (-1 ("a")) (-2 ("llai")) (1 ("o"));
+SELECT ("<l?lai>"ri Adf) (-1 ("a")) (-2 ("llai")) (1 (<<<) or (Atd));
+## MA
+SELECT ("<ma>"i B) (1 ("<'r>"));
+SELECT ("<ma>"i B) (1 ("<'>"));
+SELECT ("<ma>"i "yma") (-1 ("<'>"));
+SELECT ("<ma>" Ban) (-1 (preMA) or (E));
+SELECT ("<ma>"i B) (1 ("yna"));
+SELECT ("<ma>"i B) (1 nounlike);
+SELECT ("<ma>" Adf) (-1 (B e));
+SELECT ("<ma>" Adf) (-1 nounlike) (-2 (B));
+SELECT ("<ma>" B) (-1 nounlike) (-2 (B));
+SELECT ("<ma>" B) (-1 ("sut"));
+## MAE
+SELECT ("<mae>"i E) (-1 ("<ym>"));
+SELECT ("<mae>"i E) (1 (E p));
+REMOVE ("<mae>"i E);
+## MAEN
+SELECT ("<maen>"i "bod") (1 ("nhw"));
+## MAI
+SELECT ("<mai>"i Cys) (-1 ("achos"));
+SELECT ("<mai>"i Cys) (1 nounlike);
+SELECT ("<mai>"i Cys) (1* ("bod") BARRIER (B));
+SELECT ("<mai>"i E) (1 (YFB)) (2 (Rhi tref) or (Gw dig));
+SELECT ("<mai>"i :May:) (-1 (Rhi tref) or (Gw dig));
+SELECT ("<mai>"i :May:) (-2 (Rhi tref) or (Gw dig)) (-1 ("o"));
+SELECT ("mai" :May:) (1 (Rhi tref) or (Gw dig));
+SELECT ("mai" :fault:) (-1 ("fy"));
+SELECT ("mai" E p) (-1 (E p));
+SELECT ("<mai>"i Cys);
+## MEDDWL
+SELECT ("meddwl" B) (-1 (Uberf) OR ("i"));
+SELECT ("meddwl" E) (-1 ("iechyd") OR (YFB));
+## MEIC/FEIC
+SELECT ("beic" +nm) (-1 ("fy")) (-2 ("ar"));
+SELECT ("beic" +sm) (-1 ("ei")) (-2 ("ar"));
+SELECT ("beic" +sm) (-1 ("ei")) (-2 ("cefn"));
+SELECT ("beic") (1 ("modur") or ("ymarfer"));
+SELECT ("beic") (-1 ("taith"));
+## MEITHRIN
+SELECT ("meithrin" Ans) (-1 ("plentyn") or ("ysgol") or ("athro") or ("athrawes") or ("disgybl") or ("gwers") or ("dosbarth") or ("mudiad"));
+SELECT ("meithrin" B) (-1 (Ar)) (1 nounlike);
+## MI 
+REMOVE ("mi" U) (1 (B e));
+SELECT ("mi" U) (1 (B));
+SELECT ("mi" U) (1 (Atd)) (1 (B));
+REMOVE ("mi" U) (NOT 1 (B));
+## MOR
+SELECT ("mor" Adf) (1 (Ans)) (2 ("â") or (Atd) or (<<<));
+SELECT ("<mor>"i "môr") (-1 (YFB));
+## MWY
+SELECT ("<[mf]wy>"ri Ban) (1 (E ll));
+SELECT ("<[mf]wy>"ri Adf) (1 (Ans));
+SELECT ("<[mf]wy>"ri Adf) (-1 (B)) (1 (<<<) or (Atd));
+SELECT ("<[mf]wy>"ri Ans) (-1 nounlike);
+SELECT ("<[mf]wy>"ri Rha) (1 (Ar));
+SELECT ("<[mf]wy>"ri Rha) (1 ("a")) (2 ("mwy")) (3 ("o"));
+SELECT ("<[mf]wy>"ri Adf) (1 ("a")) (2 ("mwy")) (3 (<<<) or (Atd));
+SELECT ("<[mf]wy>"ri Rha) (-1 ("a")) (-2 ("mwy")) (1 ("o"));
+SELECT ("<[mf]wy>"ri Adf) (-1 ("a")) (-2 ("mwy")) (1 (<<<) or (Atd));
+## MWYN
+SELECT ("mwyn" E u) (-1 ("gwaith") or ("gweithfa") or ("gweithfan") or (YFB));
+SELECT ("mwyn" Ans) (-1 (nounlike));
+SELECT ("mwyn" Ans) (1 ("iawn"));
+## 'N
+REMOVE ("<'n>" "ein") (-1 (Rha));
+REMOVE ("<'n>" "ein") (1 (Ans));
+SELECT ("<'n>" U tra) (1 (Ans));
+SELECT ("<'n>" U tra) (1 (Ban)) (2 (Ans));
+SELECT ("<'n>" U berf) (1 (B e));
+SELECT ("<'n>" U berf) (1 ("<.*an>"ri Gw est));
+SELECT ("<'n>" U berf) (1 ("<.*o>"ri Gw est));
+SELECT ("<'n>" U tra) (1 (Gw est));
+REMOVE ("<'n>" "fy") (not 2 ("<i>"));
+REMOVE ("<'n>" Ar) (1 (Gw est));
+REMOVE ("<'n>" Ban) (1 (Gw est));
+## NA
+SELECT ("na" U neg) (1 ("na"));
+SELECT ("na" U neg) (-1 (Atd)) (1 (Atd));
+SELECT ("<Na>" U neg) (1 (Atd));
+SELECT ("na" U neg) (-1 ("na"));
+SELECT ("na" Cys is) (-1 (B amhers));
+SELECT ("na" Cys is) (-1 (Ans cym)) (-2 ("yn"));
+SELECT ("na" Cys is) (-1* (Ban gof));
+SELECT ("na" Cys cyd) (-2 ("heb")) (-1 (E)) (1 (E));
+SELECT ("na" U neg) (1 (B)) (2 (stop_here) OR (<<<));
+SELECT ("na" U neg) (1 (B gorch));
+REMOVE ("na" U neg) (0 ("na"));
+SELECT (Cys is) (1 ("na")) (2 (B));
+SELECT ("na" Cys is) (-1 (Cys is)) (2 (B));
+SELECT ("na" Cys cyd) (2 ("na"));
+SELECT ("na" Cys cyd) (-1 (E)) (1 (E));
+SELECT ("na" Ar) (-1 (Ans cym));
+SELECT ("na" Ar) (-1 (Ans)) (1 (nounlike));
+SELECT ("na" Rha perth) (-1 (E)) (1 (B));
+## NES
+SELECT ("<nes>"i "gwneud") (1 ("<i>"i Rha) LINK (1 (B e) or ("dim") or (:/not_of/r:)));
+SELECT ("<nes>"i Cys) (1 ("bod") or ("i" Ar));
+SELECT ("<nes>"i Cys) (1 (Ban medd) LINK (1 ("B e")));
+SELECT ("<nes>"i Cys) (1 (B e));
+SELECT ("<nes>"i Ans) (-1 ("yn") or ("un") or ("bod"));
+## NÔL
+SELECT ("nôl" Adf) (1 (Ar));
+SELECT ("nôl" B) (1 (E) or (YFB) or (Ban));
+## O
+SELECT ("<O>" Ebych) (1 (Atd));
+SELECT ("go" Adf) (-1 ("yn")) (1 (Adf));
+SELECT ("o" Ar);
+## OES
+REMOVE ("<oes>" B) (-1 ("ystod"));
+SELECT ("<oes>" B) (-1 ("a"));
+SELECT ("<oes>" E) (1 (YFB));  ## /oes/ yr iâ
+SELECT ("<oes>" E) (-1 ("ystod"));  ## /o/ oes caethwasiaeth
+## ÔL
+SELECT ("ôl" E) (1 ("troed") or ("bys") or (B e));
+SELECT ("ôl" Ans) (-1 (E) or (B));
+## PETH
+SELECT ("<beth>"i Rha gof) (-1 ("dyna") or ("dyma"));
+REMOVE ("peth" Ban) (NOT 1 (E));
+## PETH
+SELECT ("peth" Ban);
+## PRYD
+SELECT ("pryd" E) (1* ("bwyd"));
+SELECT ("pryd" Rha) (-1 (>>>));
+SELECT ("pryd" Rha) (1* ("?") BARRIER stop_here);
+SELECT ("pryd" Rha) (1 ("bod"));
+SELECT ("pryd" E) (-1* ("bwyta"));
+SELECT ("pryd" Rha);
+## PWY
+IFF ("<[pb]h?wy>" :whose:) (-1 nounlike) (1 ("bod"));
+SELECT ("<[pb]h?wy>" :which:) (-1 ("un") or ("rhai") or ("peth"));
+SELECT ("<[pb]h?wy>" :who:) (1 (inflected));
+SELECT ("<[pb]h?wy>" :which:) (1 nounlike);
+SELECT ("<[pb]h?wy>" :who:);
+## RHAI
+SELECT ("rhai" Rha) (1 (E ll));
+SELECT ("rhai" Rha) (-1 (YFB));
+SELECT ("rhai" Rha) (1 (Rha) or (E p) or (YFB));
+## RHYW
+SELECT ("rhyw" Ban) (1 ("rheswm") or ("rhai") or ("amser") or ("lefel") or ("math") or ("ffordd"));
+SELECT ("rhyw" Ban) (1 (Gw dig) or (Rhi));
+SELECT ("rhyw" Ban) (1 np_starter);
+SELECT ("rhyw" Ban) (2 ("o"));
+SELECT ("rhyw" E) (-1 ("ar_sail") or ("o_ran"));
+## SAWL
+SELECT ("sawl" Ban meint) (1 (E)) (-1* ("bod") BARRIER stop_here);
+SELECT ("sawl" Ban gof) (1 (E));
+SELECT ("sawl" Rha gof) (1 (B)) (1* ("<?>"));
+SELECT ("sawl" Rha amh) (-1 ("bod")) (1 ("bod"));
+REMOVE ("sawl" Rha gof) (NOT -1 (">>>") OR (Atd));
+## SO
+SELECT ("so" Adf) (1 (Atd));
+SELECT ("<So>" Adf) (not 1 (Rha) or (E));
+REMOVE ("so" B) (not 1 (Rha));
+SELECT ("so" Adf) (1 (B));
+REMOVE ("so" Adf) (2 ("yn") or ("wedi"));
+SELECT ("so" B 1 u) (1 (Rha 1 u));
+SELECT ("so" B 2 u) (1 (Rha 2 u));
+SELECT ("so" B 3 u) (1 (Rha 3 u));
+SELECT ("so" B 1 u) (1 (Rha 1 ll));
+SELECT ("so" B 2 u) (1 (Rha 2 ll));
+SELECT ("so" B 3 u) (1 (Rha 3 ll));
+## SÔN
+SELECT ("sôn" E) (-1* ("clywed"));
+SELECT ("sôn" B) (1 ("am"));
+SELECT ("sôn" B) (-1 ("yn"));
+## SUT
+SELECT ("sut" Ban) (1 (E)) (2 ("bod"));
+SELECT ("sut" Rha gof) (1 inflected);
+SELECT ("sut" Rha gof) (1* ("<?>") BARRIER stop_here);
+SELECT ("sut" Ban) (1 (E));
+## TYDI
+SELECT ("<tydi>"i B) (-1 (Atd)) (1 (Atd));
+## UN
+SELECT ("un" Rhi) (1 (Rhi));
+SELECT ("un" Rhi) (-1 ("blwyddyn") or ("dosbarth") or ("lefel"));
+SELECT ("un" Ans) (-1 (YFB)) (1 nounlike);
+SELECT ("un" Ans) (-1 (YFB)) (1 (Ans)) (2 nounlike);
+SELECT ("un" Rha) (1 (Rha));
+SELECT ("un" Rha) (1 ("nad") OR ("na"));
+SELECT ("un" Rha) (-1 (Rhi tref));
+SELECT ("un" Rha) (-1 (B)) (NOT 1 (E));
+SELECT ("un" Rhi) (-1 (B)) (1 (E));
+## WAETH
+SELECT ("<waeth>"i Adf) (1 ("i"));
+SELECT ("<waeth>"i Adf) (1 (Rha pers));
+SELECT ("<waeth>"i Adf) (*1 ("peidio") or ("heb") BARRIER inflected);
+SELECT ("<waeth>"i Adf) (1 ("pa") BARRIER inflected);
+SELECT ("<waeth>"i Ans) (-1 ("yn"));
+SELECT ("<waeth>"i Ans) (-1 ("yn"));
+SELECT ("<waeth>"i Ans) (-1 (E));
+## WEDI
+SELECT ("wedi" U berf) (1 (B e));
+SELECT ("wedi" U berf) (1 (Rha)) (2 (B e));
+## ŴYR
+SELECT ("<[wŵ]yr>"i E) (-1 (Ban medd));
+SELECT ("<[wŵ]yr>"i E) (1 (YFB)) (2 (E));
+SELECT ("<[wŵ]yr><ŵyr>"i E) (1 (E));
+REMOVE ("<[wŵ]yr>"i E) (-1 ("<a>"));
+## Y
+SELECT ("<y>" "fy") (1 (+nm));
+REMOVE ("<y>" "fy") (not 2 ("<i>"));
+REMOVE ("y" Rha) (not 1 inflected);
+SELECT ("y" Rha) (-1 (E)) (1 (B));
+SELECT ("y" YFB);
+## YM
+SELECT ("<ym>"i Ebych) (not 1 ("<m.*>"ri));
+SELECT ("<ym>"i Ebych) (not 1 (E));
+SELECT ("<ym>"i Ar) (not 1 ("<m.*>"ri));
+## YN
+SELECT ("yn" Ar sym) (1 (YFB));
+SELECT ("yn" U tra) (1 (E));
+SELECT ("yn" U tra) (1 (Adf));
+SELECT ("yn" U tra) (1 (Rha)) (2 (E));
+SELECT ("yn" U tra) (1 (Ans cym)) (2 ("na"));
+SELECT ("yn" U tra) (1C (Ans));
+SELECT ("yn" U tra) (1 (E sm)) (not 1 (:.*_language:ri));
+SELECT ("yn" U tra) (1 (Rhi tref sm));
+SELECT ("yn" U tra) (-1 ("bod")) (1 (Rhi fol) or (Rhi fol d)) (2 (E));  ## mae'/n/ bymtheg mis
+SELECT ("yn" U tra) (-1 ("bod")) (1 (unspec));  ## mae'/n/ full speed
+SELECT ("yn" U berf) (1 (B e));
+REMOVE ("<yn>"i U tra) (1 ("ystod") or ("lle"));
+REMOVE ("<yn>"i U berf) (1 ("ystod") or ("lle"));
+SELECT ("<yn>"i U berf) (-1* ("bod") BARRIER (stop_here)) (1 (B e));
+SELECT ("yn" U tra) (1 (Ans)) (-1* ("bod") BARRIER (B));
+SELECT ("yn" U tra) (1 (Ans)) (-1 (","));
+SELECT ("yn" U berf) (1 (B e)) (-1* ("bod") BARRIER (B));
+SELECT ("yn" U berf) (1 (B e));
+## ŶN
+SELECT ("<ŷn>" 3 ll) (1 (3 ll));
+SELECT ("<ŷn>" 1 ll) (1 (1 ll));
+## YN_ÔL
+SELECT ("yn_ôl" Adf) (1 (Atd));
+SELECT ("yn_ôl" Ar) (1 (E p));
+SELECT ("yn_ôl" Ar) (1 np_starter);
+SELECT ("yn_ôl" Adf) (1 (Ar));
+SELECT ("yn_ôl" Adf) (-1 (Ar));
+SELECT ("yn_ôl" Adf) (-1 timenoun);
+## YM
+SELECT ("<ym>"i Ar) (1 ("<m.*>"ri));
+## YMA/YNA/YNO/'NA/'MA
+REMOVE ("<(yma|yno|yna|na|'na)>"ri Adf) (-1 (E)) (-2 (YFB));
+REMOVE ("<(yma|yno|yna|na|'na)>"ri Ban) (-1 (>>>));
+REMOVE ("<(yma|yno|yna|na|'na)>"ri Ban) (-2 (>>>));
+REMOVE ("<(yma|yno|yna|na|'na)>"ri Ban) (not -1 nounlike);
+REMOVE ("<yn[ao]>"i Ban) (-1 (Cys));
+REMOVE ("<yno>"i Ar) (not 1 (Rha 3 g));
+REMOVE ("<yna>"i Ar) (not 1 (Rha 1));
+SELECT ("yna" Adf) (-1 ("bod"));  ## mae /na/ dipyn
+SELECT ("yna" :in:) (1 ("mi"));
+REMOVE ("yna" :in:) (not 1 ("mi"));
+## Y(R)
+REMOVE ("yr" U rhagf) (NOT 1 ("bod"));
+SELECT ("y" Rha perth) (1 (B)) (1C (inflected));  ## fel ag /yr/ wyt ti; sure /y/ byddai hi
+SELECT ("y" Rha perth) (-1 ("pam"));  ## pam /y/ gwladychwyd
+SELECT ("y" Rha perth) (-1 ("fel")) (1 (Rha dib)) (2 (v 0));  ## fel /y/'i gelwid
+SELECT ("y" YFB) (1 (E));
+
+SECTION
+# 7: Misc. rules by part-of-speech
+
+## Acronyms
+SELECT (Gw acr) (0 ("<[A-Z].*>"ri));  ## assume that anything in caps is an acronym, which is probably the reading to be chosen if one exists - needs checking
+
+## Adjectives
+REMOVE (Ans) (0 (Ban));
+SELECT (Ans) (-1 ("mor"));
+SELECT (Ans) (-1 ("yn"));
+SELECT ("marw" Ans) (-1 (E));  ## llaw farw (dead hand)
+SELECT ("hen" Ans) (1 smnoun);
+SELECT ("agos") (-1 (E));  ## y tro /nesa/
+SELECT (Ans) (1 ("iawn" :very:));  ## /da/ iawn
+SELECT (Ans) (0 (Adf)) (-1 (E)) (not -2 (Ar)) (not 1 (Atd t));
+REMOVE ("<.+_.+>"ri Ans);
+
+## Adverbs
+SELECT ("mwy" Adf) (1 (Ans) LINK 1* ("<na>")); # "mwy dymunol na", "mwy hapus o lawer na"
+SELECT ("llai" Adf) (1 (Ans) LINK 1* ("<na>")); # "llai dymunol na", "llai hapus o lawer na"
+SELECT ("iawn" :very:) (-1 (Ans));  ## hapus /iawn/
+SELECT ("iawn" :OK:) (not -1 (Ans));  ## /iawn/ ta
+SELECT ("pell" Adf) (1 (Cys));  ## ond /bellach/ nid yw...
+SELECT ("dim" :not:) (-1 ("bod"));  ## does /dim/
+SELECT ("dim" :not:) (-1 (Rha)) (-2 (B));  ## dyn nhw /dim/
+SELECT ("dim" :not:) (1 (E));  ## /dim/ problem
+SELECT ("dim" :not:) (1 (B e));  ## /dim/ gwaethygu
+SELECT ("do" Adf) (1 ("<,>") or ("<.>"));  ## /do, do/
+SELECT ("dyna" :that_is:) (1 (quan) or (Ans) or (Rha));  ## /na/ chydig iawn, /na/ ni
+SELECT ("allan" :out:) (-1 ("ffordd"));  ## y ffordd /allan/
+SELECT ("allan" :out:)  (1 (Ar));  ## ewch /allan/
+
+## Conjunctions
+SELECT ("er" Cys) (1 ("i" preppron));  ## /er/ iddynt
+SELECT ("â" Cys) (-1 (Ans cyf));  ## belled /â/
+SELECT ("a" Cys) (-1 (E p) or (E cap)) (1 (E p) or (E cap));  ## Môr Hafren /a/ Môr Iwerydd
+SELECT ("a" Cys) (-1 (",")) (1 (B e));  ## , /a/ cau
+SELECT ("a" Cys) (not 1 (B));  ## /a/ dy enw  -- perhaps too blunt?
+SELECT ("a" Cys) (1 (B e));  ## /a/ rhannu
+SELECT ("tra" Cys) (not 1 (Ans));  ## /tra/'n astudio
+SELECT ("taw" Cys) (1 ("dyma"));  ## /taw/ dyma
+
+## Determiners
+SELECT (Ban) (0 (Rha)) (1 (Ans));
+REMOVE (Ban) (0 (Rha)) (1 (Ar));
+SELECT (Ban meint) (0 (Rha amh)) (1 ("un") or ("peth") or ("rhai") or ("person") or ("pobl"));
+SELECT (Rha amh) (0 (Ban meint)) (1 ("o"));
+SELECT (Ban meint) (0 (Rha amh)) (-1 ("un") or ("peth") or ("rhai") or ("person") or ("pobl"));
+
+## Interrogatives
+SELECT ("lle" gof) (1 ("bod"));  ## /lle/ mae
+
+## Names
+REMOVE (E p) (-1 (>>>) or (Atd));
+
+## Nouns
+REMOVE ("ôl" E) (-1 ("ar"));  ## ar /ôl/
+SELECT ("arfer" E) (-1 ("fel" Cys));  ## fel /arfer/
+SELECT ("diolch" E) (-1 (Atd)) (1 (Atd));  ## , /diolch/.
+SELECT ("diolch" E) (1 ("yn")) (2 ("mawr"));  ## /diolch/ yn fawr
+SELECT ("meddwl" E) (-1 (Rha dib)) (1 (preppron));  ## newid eich /feddwl/ amdano
+SELECT ("oes" E) (-1 ("o" Ar));  ## /o/ oes caethwasiaeth
+SELECT ("teledu" E) (-1 ("cyfres"));  ## cyfres /deledu/
+SELECT ("casgliad" E) (1 ("o" Ar));  ## /casgliad/ o
+SELECT ("diolch" E) (1 ("i" Ar));  ## /diolch/ i
+SELECT (E) (-1 ("y" YFB) or (Ban));
+SELECT (E) (-1 (B e));  ## yn cyflwyno /cynigion/
+SELECT (E) (-1 (Adf));  ## /fesul/ cam
+SELECT (E) (-1C inflected) (NOT -1 ("bod"));  ## gafodd /rhoddion/
+SELECT (E) (-1C (Ar));  ## mewn /ardal/
+SELECT (E) (1 (E p));  ## yn /ardal/ Penybont
+
+
+## Particles
+SELECT ("a" U gof) (1 inflected + mutS) (-1 (>>>));
+SELECT ("a" U gof) (1 inflected + initSV) (-1 (>>>));
+SELECT ("a" Rha perth) (1 inflected + mutS);
+SELECT ("a" Rha perth) (1 ("<oedd>"));  ## /a/ oedd
+
+## Prefixes
+REMOVE (U blaen [en]) (1 ([cy]));
+REMOVE (U blaen [cy]) (1 ([en]));
+SELECT (B) (-1 ("gor-"));
+
+## Prepositions
+SELECT smtrigger (1 (sm));
+SELECT ("at" 3 g u) (1 (Atd));
+REMOVE ("yn_ôl" Ar) (NOT 1 (E) or (Rha) or (YFB) or ("pob"));
+SELECT ("yn_ôl" Adf) (1 (Atd));
+SELECT ("yn_ôl" Adf) (1 (<<<));
+SELECT ("yn_ôl" Adf) (-1 ("blwyddyn") or ("mis") or ("dydd") or ("awr") or ("munud"));
+SELECT ("yn_ôl" Adf) (1 (<<<));
+SELECT ("ar_ben" Ar) (1 (E) or (YFB) or ("pob"));
+SELECT ("ar_ben" Adf) (1 (<<<));
+SELECT ("ar_ben" Adf) (1 (Atd));
+SELECT ("yn" Ar) (1 (YFB));
+SELECT ("yn" Ar) (1 (E p) or (Rhi) or (Gw dig) or ("man"));   ## yn /Lloegr/, yn /615/, yn /fanno/
+SELECT ("yn" Ar) (1 ("sir") or ("ardal")) (2 (E p));  ## /yn/ Sir Drefaldwyn
+SELECT ("yn" Ar) (1 (nm));  ## yn /ne-orllewin/
+SELECT ("yn" Ar) (-1 ("hyd")) (1 ("hwn"));  ## hyd /yn/ hyn
+SELECT ("o" :of:) (1 (YFB) or (Rha dib));  ## /o'r/ môr, /o'n/ ffrindiau
+SELECT ("o" :of:) (1 infinitive + (sm));
+SELECT ("o" :of:) (not -1 (B)) (1 (E));  ## llawer iawn o bobl
+SELECT ("o" :of:) (-1 (Ans)) (-2 (E) or (Adf));  ## peil go dda o
+SELECT ("o" :of:) (1 (Gw sym));  ## buddsoddiad o £3 miliwn
+SELECT ("o" :of:) (-1 (E)) (-2 ("yn"));  ## yn rhan o
+SELECT ("o" :of:) (1 (Gw sym));  ## o /£/3.6m
+SELECT ("o" :of:) (-1 ("gwared"));  ## cael gwared /o/
+SELECT ("o" :of:) (-1 ("nifer"));  ## nifer /o/
+SELECT ("o" :of:) (1 (E p));  ## /o/ Sobibor
+SELECT ("i" Ar) (-1 (B e)) (1 (B e));  ## defnyddio /i/ sicrhau
+SELECT ("i" Ar) (1 (YFB) or (Rha dib));  ## /i'r/ dwyrain, /i'w/ disgrifio
+SELECT ("i" Ar) (1 (E p));  ## /i/ Iwerddon
+SELECT ("i" Ar) (1 (Rha pers));  ## /i/ mi
+SELECT ("<i>" Ar) (1 (B e));  ## /i/ cael
+SELECT ("â" Ar) (1 (YFB) or (E) or (E p)) (not -1 (Ans cym));  ## aeth taid /â'r/ ddwy ferch; ffinio /â/ Lloegr
+SELECT ("â" Ar) (-1 ("peidio"));  ## paid /â/ poeni
+SELECT ("cyn" Ar) (not 1 (Ans cyf));
+SELECT ("cyn" Adf) (1 (Ans cyf));  ## /cyn/ belled
+SELECT ("gan" Ar) (not -1 smtrigger);  ## gan Dean
+SELECT ("wedi" Ar) (1 (B e));  ## /wedi/ newid
+SELECT (Rha 1 u) (-1 (preppron 1 u));  ## amdana i
+SELECT ("am" Ar) (not -1 (Rhi));
+SELECT ("am" Ar) (not -1 (Gw dig));
+SELECT ("am" Ar) (-2 (Gw sym)) (-1 (Rhi) or (Gw dig)); ## £50 /am/ ...
+SELECT ("am" Gw) (-1 (Rhi) or (Gw dig)); # 2/am/
+
+## Pronouns
+REMOVE (Rha) (1 (YFB));
+SELECT (Rha dib) (-1* (Ban medd));
+SELECT ("yn" U tra) (-2 ("bod")) (-1 (E));
+SELECT (Rha 1 u) (-1 (B 1 u)) (not -1 (B e));  ## !allan i ddawnsio
+SELECT ("ei" :his:) (1 (sm));
+REMOVE ("mynd" B pres 2 u :go:) (-1 (B e) or (Rha));  ## colli /ei/ portmanteau
+SELECT ("fo" Rha) (-1 (B e)) (1 (U)) (2 (Ans));  ## i wneud /o/'n saff
+SELECT ("fo" Rha) (-1 ("<ydy>"));  ## ydy /o/
+SELECT ("ni" :we:) (not 1 inflected);  ## ie rule out particles
+SELECT ("ein" Rha dib) (-1 ("gyda")) (1 (gilydd));  ## gyda/'n/ gilydd
+REMOVE (Rha pers) (0 (Rha dib)) (-1* (Ban medd) BARRIER (B));
+REMOVE (Rha dib) (0 (Rha pers)) (not -1* (Ban medd) BARRIER (B));
+SELECT ("ei" Rha dib g) (1 (sm));   ## SM follows, choose "his"
+SELECT ("ei" Rha dib b) (not 1 (sm));  ## no SM follows, choose "her" - these rules are imperfect, but acceptable fttb
+SELECT ("mi" Rha pers) (-2 ("fy" Rha dib)) (-1 (E)) (1 ("yn" U));  ## fy mod /i/'n
+SELECT ("mi" Rha pers) (-1 ("i" Ar));  ## /i/ mi
+SELECT ("<i>" Ar) (-1 ("<i>" Rha));
+SELECT (Rha perth) (-1 (Cys)) (1 (B)); ## Os /nad/ oeddech yn...
+SELECT (Rha gof) (-1 ("gwybod")) (1 ("gallu"));
+
+## Verbs
+#### general
+REMOVE (B gorch sm);
+REMOVE (B gorch) (not -1 (>>>));
+SELECT (B amod) (-1 (U gof));
+SELECT (B pres 3) (1 (Ban 3 u));
+SELECT (B) (0 (E)) (-1 (Ban medd)) (1 (Rha));
+SELECT (B 1) (1 (Ban 1 u));
+SELECT (B 1 u) (1 (Rha 1 u));  ## /wna/ i
+SELECT (B 1 ll) (1 (Rha 1 ll));  ## /wnawn/ ni
+SELECT (B e) (-1 ("yn" U berf));
+SELECT (B e) (not 0 (sm)) (-1 (B e));  ## penderfynu troi, !dawnsio gynnau
+SELECT (B e) (-1 possessive);
+SELECT (B e) (-1 preposition);
+SELECT (B e) (-1 (E)) (1 (E));  ## mesur /codi/ ffioedd
+SELECT (B e) (-1 ("<,>")) (1 (E p));  ## , /briodi/ Helen
+SELECT (B e) (-3 inflected) (-2 (Rha)) (-1 ("jyst"));  ## fedrach chi jyst /edrych/?
+SELECT (B e) (-1 (Rha)) (-2 ("i"));  ## iddyn nhw /dechrau/
+SELECT (B) (1 (Rha pers));
+#### gallu
+SELECT ("gallu" B) (-1 ("sut"));
+SELECT ("gallu" B pres 3 u) (1* (B e) BARRIER (stop_here));  ## /gall/ ... siarad  ## Needs to be constrained to the same clause.
+#### gwneud
+SELECT (B e) (-1* ("gwneud") BARRIER (stop_here));  ## wnaeth nain Edwards briodi - CHECK this: it may be too broad
+#### bod
+SELECT (B) (1 ("<[bmf]od>"ri));
+SELECT ("<[bmf]od>"ri B e) (-1 (B e));
+SELECT ("bod" B e) (1 (Rha)) (2 ("yn"));
+SELECT ("bod" dyf) (not 1 ("yn" U));
+SELECT ("bod" B e) (-1 (Rha));
+SELECT ("bod" B e) (1 (Rha));
+SELECT ("bod" B pres 3 amhen) (not -1 ("am") or (YFB) or ("pys"));  ## oes - check: may be too broad
+SELECT ("bod") (0 ("<dyn>")) (1 (Rha));  ## dyn /nhw/ ddim
+SELECT ("<'?mod>"ri B e) (-1 ("meddwl") or ("credu") or ("gobeithio") or ("dweud") or ("honni") or ("ofnu")) (1 (Rha 1));
+
+SECTION
+# 8: Last-ditch efforts
+REMOVE ("[a-z].+"r E p);
+SELECT ("<fath>"i "math");
+REMOVE ("<pam>"ri E);
+SELECT ("so" Adf);
+SELECT (Ban) (1 (E));
+SELECT (Rha) (1 (Ar));
+SELECT (Rha) (not 1 nounlike);
+SELECT (Ar sym);
+REMOVE (B dibdyf) (0 (B e));
+SELECT ("reit" Ebych);
+SELECT (B e) (-1 (U berf));
+REMOVE ([en]) (-1 ([cy]) OR ([neutral]));
+REMOVE ("gwrth" :counter:);
+REMOVE (B perth) (0 (B pres));
+REMOVE ("gwneud" +sm) (0 ("gwneud" +0m));
+REMOVE ("eu" E p);
+REMOVE ("côr" E g ll +sm);
+REMOVE ("cân" +sm) (NOT -1 smtrigger);
+SELECT (Ans cad u) (0 (E));
+SELECT (Ans) (0 (B ing));
+SELECT (Ans) (0 (B en));
+SELECT ([en] Ans) (NOT 0 ([cy]));
+
+SECTION
+# 9: Attempt to fix irrelevant ambiguities (e.g. where a word may be feminine or masculine, but all other features match - there's no good reason to output an ambiguous reading)
+REMOVE (Ban medd 3 b u) (0 (Ban medd 3 g u));
+SUBSTITUTE (E b) (E gb) TARGET (E b) (0 (E g));
+SELECT ([en] Rha dang) (NOT 0 ([cy]));
+
+SECTION
+# 10: Likelihood hierarchy of pos tags for still-ambiguous items
+REMOVE (E b) (0 (E gb));
+REMOVE (E g) (0 (E gb));
+REMOVE (Ban 3 b u) (0 (Ban d u));
+REMOVE (Ban 3 g u) (0 (Ban d u));
+REMOVE (B pres 3 u) (0 (B e));
+REMOVE (B gorch) (0 (B e));
+REMOVE ("<ei>"i 3 g u) (0 (3 d u));
+SELECT (+0m);
+SELECT ("<.+[ae]>"r E ll);
+REMOVE ([en]) ((-1 ([cy])) OR (1 ([cy])));
+SELECT (Adf);
+SELECT (Ebych);
+SELECT (Ban meint);
+SELECT (E u);
+SELECT (E ll);
+SELECT (B pres);
+SELECT (B gorff);
+SELECT (B gorch);
+SELECT (B dyf);
+SELECT (B e);
+SELECT (B pres);
+SELECT ("[a-z]+"r);
+
+SECTION
+# 11: Second hierarchy - more precise selections than the above
+SELECT (B 1 u);
+SELECT (B 1 ll);
+SELECT (B 3 ll);
+SELECT (E gb);
+SELECT (Ar 1 ll);
+SELECT (Ar 3 g u) (0 (Ar 1 u));
+SELECT (B pres 2 u);
+REMOVE (3 g u) (0 (3 d u));
+SELECT (dib dyf amhers) (0 (gorch amhers));
+SELECT (amod 2 ll);
+
+SECTION
+# 12: Replace all "unknown" with proper-noun tag if initial capital, otherwise with noun-singular tag
+SUBSTITUTE (unk) (E p) TARGET ("<[A-Z][a-zA-Z]+"r unk);
+SUBSTITUTE (unk) (E gb u) TARGET (unk);
+
+SECTION
+# 13: Final broad-brush selections
+REMOVE ([en]) (0 ([cy]));
+SELECT (Rha pers 2 u [en]);

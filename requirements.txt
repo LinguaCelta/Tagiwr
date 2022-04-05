@@ -1,0 +1,4 @@
+click
+termcolor
+unicodedata2
+
